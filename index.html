@@ -3,168 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>אפליקציית לוח הכפל של ליה</title>
+    <title>אפליקציית לוח הכפל של ליה ✨</title>
     <style>
-        :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --text: #4a1d33; --accent: #ffd1dc; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+        :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --white: #ffffff; --accent: #ffd1dc; --gold: #FFD700; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
         
         /* דשבורד עליון */
-        .header { display: flex; justify-content: space-around; background: white; padding: 15px; border-bottom: 3px solid var(--main); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .stat { text-align: center; }
-        .stat-val { font-size: 2.2rem; font-weight: bold; color: var(--main); display: block; }
-        .stat-label { font-size: 1rem; font-weight: bold; }
+        .dashboard { background: var(--white); padding: 15px; border-bottom: 4px solid var(--main); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .stats-row { display: flex; justify-content: space-around; align-items: center; }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 1.8rem; font-weight: 900; color: var(--main); display: block; }
+        .stat-label { font-size: 0.8rem; font-weight: bold; color: var(--secondary); }
 
-        /* מסכי אפליקציה */
-        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 100px); padding: 20px; box-sizing: border-box; }
-        
-        .app-title { font-size: 3rem; color: var(--secondary); margin-bottom: 30px; text-shadow: 2px 2px 0px white; text-align: center; }
-        .section-title { font-size: 1.8rem; margin: 15px 0; color: var(--main); font-weight: bold; }
+        /* סרגל התקדמות למדליה */
+        .progress-section { padding: 5px 15px; }
+        .progress-bar-bg { background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-top: 5px; }
+        .progress-bar-fill { background: var(--main); height: 100%; width: 0%; transition: 0.5s; }
+        .progress-text { font-size: 0.8rem; font-weight: bold; color: var(--secondary); display: block; text-align: center; }
 
-        .btn-group { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
-        
-        .btn { padding: 18px 35px; border: none; border-radius: 25px; font-size: 1.4rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 0px rgba(0,0,0,0.1); }
-        .btn-mode { background: white; color: var(--secondary); border: 2px solid var(--secondary); }
-        .btn-mode.active { background: var(--secondary); color: white; transform: translateY(2px); box-shadow: none; }
-        
+        /* לוח תמריצים (יעדים) */
+        .targets-map { display: flex; justify-content: space-around; background: #fff; margin: 10px; padding: 10px; border-radius: 15px; border: 1px solid var(--accent); }
+        .target-item { font-size: 0.75rem; text-align: center; opacity: 0.4; transition: 0.3s; }
+        .target-item.active { opacity: 1; transform: scale(1.05); font-weight: bold; color: var(--main); }
+
+        /* מסכים */
+        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 20px; text-align: center; box-sizing: border-box; }
+        .title { font-size: 2.2rem; color: var(--secondary); margin-bottom: 20px; font-weight: bold; }
+        .subtitle { font-size: 1.3rem; margin: 10px 0; color: var(--main); font-weight: bold; }
+
+        .btn-group { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn { padding: 12px 25px; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-cat { background: white; color: var(--secondary); border: 2px solid var(--secondary); }
+        .btn-cat.active { background: var(--secondary); color: white; }
         .btn-diff { background: var(--accent); color: var(--text); }
-        .btn-diff.active { background: var(--main); color: white; transform: translateY(2px); box-shadow: none; }
+        .btn-diff.active { background: var(--main); color: white; }
+        .btn-start { background: #4caf50; color: white; width: 220px; font-size: 1.5rem; margin-top: 15px; box-shadow: 0 4px 0 #2e7d32; }
 
-        .btn-start { background: #4caf50; color: white; width: 280px; margin-top: 20px; font-size: 1.8rem; }
+        /* משחק */
+        #gameArea { display: none; }
+        #emoji { font-size: 5rem; height: 90px; }
+        .question { font-size: 6rem; font-weight: 900; margin: 5px 0; }
+        input { border: 5px solid var(--main); border-radius: 20px; width: 160px; font-size: 4rem; text-align: center; outline: none; }
 
-        /* אזור המשחק */
-        #gameArea { display: none; text-align: center; }
-        .q-display { font-size: 9rem; font-weight: 900; margin: 10px 0; color: var(--secondary); }
-        input { background: white; border: 4px solid var(--accent); border-radius: 20px; color: var(--main); font-size: 5rem; width: 220px; text-align: center; outline: none; margin-bottom: 20px; }
-        input:focus { border-color: var(--main); }
-
-        .game-controls { display: flex; gap: 15px; width: 100%; max-width: 600px; }
-        .btn-game { flex: 1; padding: 20px; border-radius: 20px; border: none; font-size: 1.6rem; font-weight: bold; cursor: pointer; color: white; }
-        .btn-check { background: #4caf50; }
+        .game-btns { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
+        .btn-action { flex: 1; padding: 15px; border-radius: 15px; border: none; font-size: 1.4rem; color: white; font-weight: bold; cursor: pointer; }
+        .btn-ok { background: #4caf50; }
         .btn-hint { background: #ff9800; }
 
-        #hintBox { margin-top: 20px; background: #fff9c4; padding: 20px; border-radius: 15px; display: none; width: 90%; border: 2px dashed var(--main); font-size: 1.4rem; text-align: right; }
-
-        /* מסך הפתעה לליה */
-        #win { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .win-card { background: white; padding: 50px; border-radius: 40px; border: 8px solid var(--main); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        /* מסך הפתעה */
+        #winOverlay { display: none; position: fixed; inset: 0; background: white; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .win-box { background: var(--main); color: white; padding: 30px; border-radius: 30px; border: 8px solid var(--gold); }
     </style>
 </head>
 <body>
 
-<div id="win">
-    <div class="win-card">
-        <h1 style="font-size: 5rem; margin: 0;">👑 ליה האלופה! 👑</h1>
-        <h2 style="font-size: 2.5rem; color: var(--secondary);">צברת 5 גביעים בלוח הכפל!</h2>
-        <div style="background: var(--main); color: white; padding: 30px; border-radius: 20px; font-size: 2.2rem; font-weight: bold; margin: 30px 0;">
-            ליה, מגיעה לך הפתעה מאבא ואמא! 🎁
-        </div>
-        <button class="btn btn-check" style="font-size: 1.5rem;" onclick="location.reload()">רוצה לשחק שוב?</button>
+<div id="winOverlay">
+    <div class="win-box">
+        <h1>👑 ליה המלכה! 👑</h1>
+        <h2>הגעת ל-5 גביעים!</h2>
+        <p style="font-size: 2rem; font-weight: bold;">הפתעה ענקית מאבא ואמא מחכה לך! 🎁</p>
+        <button class="btn btn-cat" style="background:white;" onclick="location.reload()">לשחק שוב</button>
     </div>
 </div>
 
-<div class="header">
-    <div class="stat"><span class="stat-label">⭐ נקודות</span><span id="score" class="stat-val">0</span></div>
-    <div class="stat"><span class="stat-label">🎖️ מדליות</span><span id="medals" class="stat-val">0</span></div>
-    <div class="stat"><span class="stat-label">🏆 גביעים</span><span id="trophies" class="stat-val">0</span></div>
+<div class="dashboard">
+    <div class="stats-row">
+        <div class="stat-item"><span class="stat-num" id="score">0</span><span class="stat-label">⭐ נקודות</span></div>
+        <div class="stat-item"><span class="stat-num" id="medals">0</span><span class="stat-label">🎖️ מדליות</span></div>
+        <div class="stat-item"><span class="stat-num" id="trophies">0</span><span class="stat-label">🏆 גביעים</span></div>
+    </div>
+    <div class="progress-section">
+        <span class="progress-text" id="progText">עוד 10 נקודות למדליה הבאה!</span>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="barFill"></div></div>
+    </div>
+</div>
+
+<div class="targets-map">
+    <div class="target-item" id="t1">🎖️<br>מדליה<br>(10 נק')</div>
+    <div class="target-item" id="t2">🏆<br>גביע<br>(10 מדליות)</div>
+    <div class="target-item" id="t3">🎁<br>הפתעה!<br>(5 גביעים)</div>
 </div>
 
 <div class="screen" id="lobby">
-    <div class="app-title">אפליקציית לוח הכפל של ליה ✨</div>
-    
-    <div class="section-title">באיזו כיתה את, ליה?</div>
+    <div class="title">האפליקציה של ליה ✨</div>
+    <div class="subtitle">באיזו כיתה את, ליה?</div>
     <div class="btn-group">
-        <button class="btn btn-mode active" id="modeB" onclick="setMode('B')">כיתה ב'</button>
-        <button class="btn btn-mode" id="modeG" onclick="setMode('G')">כיתה ג'</button>
+        <button class="btn btn-cat active" id="catB" onclick="setCat('B')">כיתה ב'</button>
+        <button class="btn btn-cat" id="catG" onclick="setCat('G')">כיתה ג'</button>
     </div>
-
-    <div class="section-title">בחרי רמת קושי:</div>
+    <div class="subtitle">בחרי רמת קושי:</div>
     <div class="btn-group">
-        <button class="btn btn-diff active" id="d1" onclick="setD(1)">קליל 😊</button>
-        <button class="btn btn-diff" id="d2" onclick="setD(2)">בינוני 🤔</button>
-        <button class="btn btn-diff" id="d3" onclick="setD(3)">מאתגר 🔥</button>
+        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל 😊</button>
+        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני 🤔</button>
+        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר 🔥</button>
     </div>
-
-    <button class="btn btn-start" onclick="start()">בואי נתחיל! 🚀</button>
+    <button class="btn btn-start" onclick="startGame()">בואי נתחיל! 🚀</button>
 </div>
 
 <div class="screen" id="gameArea">
-    <div id="emoji" style="font-size: 6rem; height: 120px;"></div>
-    <div class="q-display" id="q"></div>
+    <div id="emoji"></div>
+    <div class="question" id="q"></div>
     <input type="number" id="ans" inputmode="numeric" placeholder="?">
-    
-    <div class="game-controls">
-        <button class="btn-game btn-check" onclick="check()">בדקתי! ✅</button>
-        <button class="btn-game btn-hint" onclick="hint()">רמז ✨</button>
+    <div class="game-btns">
+        <button class="btn-action btn-ok" onclick="check()">בדקתי! ✅</button>
+        <button class="btn-action btn-hint" onclick="showHint()">רמז ✨</button>
     </div>
-    <button onclick="location.reload()" style="background:none; border:none; color: gray; margin-top: 20px; cursor:pointer; font-size: 1.2rem;">חזרה לתפריט</button>
-    <div id="hintBox"></div>
+    <button onclick="location.reload()" style="background:none; border:none; color: gray; margin-top: 15px; cursor:pointer;">חזרה לתפריט</button>
 </div>
 
 <script>
-    let s=0, mode='B', diff=1, n1, n2, correct;
+    let s=0, cat='B', diff=1, n1, n2, ansVal;
     const input = document.getElementById('ans');
 
-    function setMode(m) {
-        mode = m;
-        document.getElementById('modeB').classList.toggle('active', m==='B');
-        document.getElementById('modeG').classList.toggle('active', m==='G');
-    }
-
-    function setD(d) {
-        diff = d;
-        for(let i=1; i<=3; i++) document.getElementById('d'+i).classList.toggle('active', i===d);
-    }
-
-    function start() {
-        document.getElementById('lobby').style.display = 'none';
-        document.getElementById('gameArea').style.display = 'flex';
-        next();
+    function setCat(c) { cat=c; document.getElementById('catB').classList.toggle('active', c==='B'); document.getElementById('catG').classList.toggle('active', c==='G'); }
+    function setDiff(d) { diff=d; for(let i=1; i<=3; i++) document.getElementById('d'+i).classList.toggle('active', i===d); }
+    
+    function startGame() { 
+        document.getElementById('lobby').style.display='none'; 
+        document.getElementById('gameArea').style.display='flex'; 
+        next(); 
     }
 
     function next() {
-        if (mode === 'B') {
-            let options = [1, 2, 5, 10];
-            if (diff >= 2) options.push(3, 4);
+        if (cat === 'B') {
+            let options = (diff === 1) ? [1, 2, 10] : (diff === 2 ? [1, 2, 5, 10] : [2, 3, 4, 5, 10]);
             n1 = options[Math.floor(Math.random() * options.length)];
-            n2 = diff === 1 ? Math.floor(Math.random()*6) : Math.floor(Math.random()*11);
+            n2 = (diff === 3) ? Math.floor(Math.random() * 11) : Math.floor(Math.random() * 6);
         } else {
-            let options = diff === 1 ? [3, 4, 6] : (diff === 2 ? [6, 7, 8] : [7, 8, 9]);
+            let options = (diff === 1) ? [3, 4, 6] : (diff === 2 ? [6, 7, 8] : [7, 8, 9]);
             n1 = options[Math.floor(Math.random() * options.length)];
-            n2 = diff === 1 ? Math.floor(Math.random()*11) : Math.floor(Math.random()*7)+3;
+            n2 = (diff === 1) ? Math.floor(Math.random() * 11) : Math.floor(Math.random() * 7) + 3;
         }
-
-        correct = n1 * n2;
+        ansVal = n1 * n2;
         document.getElementById('q').innerText = `${n1} × ${n2}`;
-        input.value = "";
-        document.getElementById('emoji').innerText = "";
-        document.getElementById('hintBox').style.display = "none";
-        input.focus();
+        input.value = ""; document.getElementById('emoji').innerText = ""; input.focus();
     }
 
     function check() {
-        if(parseInt(input.value) === correct) {
-            s++;
-            update();
+        if(parseInt(input.value) === ansVal) {
+            s++; updateStats();
             document.getElementById('emoji').innerText = "😊";
-            if(Math.floor(s/100) >= 5) document.getElementById('win').style.display = "flex";
-            else setTimeout(next, 1000);
-        } else {
-            document.getElementById('emoji').innerText = "😟";
-        }
+            if(Math.floor(s/100) >= 5) document.getElementById('winOverlay').style.display = "flex";
+            else setTimeout(next, 800);
+        } else { document.getElementById('emoji').innerText = "😟"; }
     }
 
-    function update() {
+    function updateStats() {
         document.getElementById('score').innerText = s;
-        document.getElementById('medals').innerText = Math.floor(s/10);
-        document.getElementById('trophies').innerText = Math.floor(s/100);
+        let m = Math.floor(s/10);
+        let t = Math.floor(m/10);
+        document.getElementById('medals').innerText = m;
+        document.getElementById('trophies').innerText = t;
+
+        // עדכון סרגל התקדמות (לפי מדליה)
+        let prog = (s % 10) * 10;
+        document.getElementById('barFill').style.width = (s>0 && s%10===0 ? 100 : prog) + "%";
+        document.getElementById('progText').innerText = s%10===0 && s>0 ? "קיבלת מדליה! 🎖️" : `עוד ${10-(s%10)} נקודות למדליה!`;
+
+        // הארת יעדים
+        if(s >= 10) document.getElementById('t1').classList.add('active');
+        if(s >= 100) document.getElementById('t2').classList.add('active');
+        if(s >= 500) document.getElementById('t3').classList.add('active');
     }
 
-    function hint() {
-        const h = document.getElementById('hintBox');
-        h.innerHTML = `<b>ליה, הנה רמז בשבילך:</b><br>• את יכולה לחבר את ${n1} פלוס עצמו ${n2} פעמים.<br>• וזוכרת שאפשר להפוך? ${n2} × ${n1} זו אותה תשובה בדיוק!`;
-        h.style.display = h.style.display === "block" ? "none" : "block";
-    }
-
+    function showHint() { alert(`ליה אלופה, הנה רמז:\nלחשב את ${n1} פלוס עצמו ${n2} פעמים!\nאו להפוך את התרגיל ל-${n2} כפול ${n1}.`); }
     input.addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
 </script>
 
