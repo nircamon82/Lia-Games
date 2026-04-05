@@ -8,25 +8,21 @@
         :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --white: #ffffff; --accent: #ffd1dc; --gold: #FFD700; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
         
-        /* דשבורד עליון */
         .dashboard { background: var(--white); padding: 15px; border-bottom: 4px solid var(--main); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .stats-row { display: flex; justify-content: space-around; align-items: center; }
         .stat-item { text-align: center; }
         .stat-num { font-size: 1.8rem; font-weight: 900; color: var(--main); display: block; }
         .stat-label { font-size: 0.8rem; font-weight: bold; color: var(--secondary); }
 
-        /* סרגל התקדמות למדליה */
         .progress-section { padding: 5px 15px; }
         .progress-bar-bg { background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .progress-bar-fill { background: var(--main); height: 100%; width: 0%; transition: 0.5s; }
         .progress-text { font-size: 0.8rem; font-weight: bold; color: var(--secondary); display: block; text-align: center; }
 
-        /* לוח תמריצים (יעדים) */
         .targets-map { display: flex; justify-content: space-around; background: #fff; margin: 10px; padding: 10px; border-radius: 15px; border: 1px solid var(--accent); }
         .target-item { font-size: 0.75rem; text-align: center; opacity: 0.4; transition: 0.3s; }
         .target-item.active { opacity: 1; transform: scale(1.05); font-weight: bold; color: var(--main); }
 
-        /* מסכים */
         .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 20px; text-align: center; box-sizing: border-box; }
         .title { font-size: 2.2rem; color: var(--secondary); margin-bottom: 20px; font-weight: bold; }
         .subtitle { font-size: 1.3rem; margin: 10px 0; color: var(--main); font-weight: bold; }
@@ -39,18 +35,16 @@
         .btn-diff.active { background: var(--main); color: white; }
         .btn-start { background: #4caf50; color: white; width: 220px; font-size: 1.5rem; margin-top: 15px; box-shadow: 0 4px 0 #2e7d32; }
 
-        /* משחק */
         #gameArea { display: none; }
         #emoji { font-size: 5rem; height: 90px; }
-        .question { font-size: 6rem; font-weight: 900; margin: 5px 0; }
-        input { border: 5px solid var(--main); border-radius: 20px; width: 160px; font-size: 4rem; text-align: center; outline: none; }
+        .question { font-size: 5.5rem; font-weight: 900; margin: 5px 0; letter-spacing: -2px; }
+        input { border: 5px solid var(--main); border-radius: 20px; width: 200px; font-size: 4rem; text-align: center; outline: none; }
 
         .game-btns { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
         .btn-action { flex: 1; padding: 15px; border-radius: 15px; border: none; font-size: 1.4rem; color: white; font-weight: bold; cursor: pointer; }
         .btn-ok { background: #4caf50; }
         .btn-hint { background: #ff9800; }
 
-        /* מסך הפתעה */
         #winOverlay { display: none; position: fixed; inset: 0; background: white; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .win-box { background: var(--main); color: white; padding: 30px; border-radius: 30px; border: 8px solid var(--gold); }
     </style>
@@ -79,9 +73,9 @@
 </div>
 
 <div class="targets-map">
-    <div class="target-item" id="t1">🎖️<br>מדליה<br>(10 נק')</div>
-    <div class="target-item" id="t2">🏆<br>גביע<br>(10 מדליות)</div>
-    <div class="target-item" id="t3">🎁<br>הפתעה!<br>(5 גביעים)</div>
+    <div class="target-item" id="t1">🎖️<br>מדליה</div>
+    <div class="target-item" id="t2">🏆<br>גביע</div>
+    <div class="target-item" id="t3">🎁<br>הפתעה!</div>
 </div>
 
 <div class="screen" id="lobby">
@@ -126,13 +120,41 @@
 
     function next() {
         if (cat === 'B') {
-            let options = (diff === 1) ? [1, 2, 10] : (diff === 2 ? [1, 2, 5, 10] : [2, 3, 4, 5, 10]);
-            n1 = options[Math.floor(Math.random() * options.length)];
-            n2 = (diff === 3) ? Math.floor(Math.random() * 11) : Math.floor(Math.random() * 6);
-        } else {
-            let options = (diff === 1) ? [3, 4, 6] : (diff === 2 ? [6, 7, 8] : [7, 8, 9]);
-            n1 = options[Math.floor(Math.random() * options.length)];
-            n2 = (diff === 1) ? Math.floor(Math.random() * 11) : Math.floor(Math.random() * 7) + 3;
+            if (diff === 1) {
+                n1 = [1, 2, 5, 10][Math.floor(Math.random() * 4)];
+                n2 = Math.floor(Math.random() * 11);
+            } else if (diff === 2) {
+                n1 = [2, 3, 4, 5, 10, 11][Math.floor(Math.random() * 6)];
+                n2 = Math.floor(Math.random() * 11);
+            } else { // מאתגר כיתה ב'
+                // הוספת מכפלות של 12 ומספרים עגולים
+                let choice = Math.random();
+                if (choice < 0.6) {
+                    n1 = [11, 12, 20, 30][Math.floor(Math.random() * 4)];
+                    n2 = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+                } else {
+                    n1 = Math.floor(Math.random() * 6) + 6; // 6-11
+                    n2 = Math.floor(Math.random() * 6) + 6; // 6-11
+                }
+            }
+        } else { // כיתה ג'
+            if (diff === 1) {
+                n1 = [3, 4, 6, 7][Math.floor(Math.random() * 4)];
+                n2 = Math.floor(Math.random() * 11);
+            } else if (diff === 2) {
+                n1 = [7, 8, 9, 12][Math.floor(Math.random() * 4)];
+                n2 = Math.floor(Math.random() * 11) + 2;
+            } else { // מאתגר כיתה ג'
+                // תרגילים קשים באמת: דו ספרתי כפול חד ספרתי, או עשרות
+                let choice = Math.random();
+                if (choice < 0.5) {
+                    n1 = [13, 14, 15, 16, 17, 18, 19][Math.floor(Math.random() * 7)];
+                    n2 = Math.floor(Math.random() * 7) + 3; // 3-9
+                } else {
+                    n1 = [20, 30, 40, 50, 60][Math.floor(Math.random() * 5)];
+                    n2 = Math.floor(Math.random() * 8) + 2; // 2-9
+                }
+            }
         }
         ansVal = n1 * n2;
         document.getElementById('q').innerText = `${n1} × ${n2}`;
@@ -155,18 +177,18 @@
         document.getElementById('medals').innerText = m;
         document.getElementById('trophies').innerText = t;
 
-        // עדכון סרגל התקדמות (לפי מדליה)
         let prog = (s % 10) * 10;
         document.getElementById('barFill').style.width = (s>0 && s%10===0 ? 100 : prog) + "%";
         document.getElementById('progText').innerText = s%10===0 && s>0 ? "קיבלת מדליה! 🎖️" : `עוד ${10-(s%10)} נקודות למדליה!`;
 
-        // הארת יעדים
         if(s >= 10) document.getElementById('t1').classList.add('active');
         if(s >= 100) document.getElementById('t2').classList.add('active');
         if(s >= 500) document.getElementById('t3').classList.add('active');
     }
 
-    function showHint() { alert(`ליה אלופה, הנה רמז:\nלחשב את ${n1} פלוס עצמו ${n2} פעמים!\nאו להפוך את התרגיל ל-${n2} כפול ${n1}.`); }
+    function showHint() { 
+        alert(`ליה אלופה, רמז לתרגיל קשה:\n${n1} כפול ${n2} זה כמו ${n1} ועוד עצמו ${n2} פעמים!\nטיפ: אפשר לפרק את ${n1} ל-10 ועוד משהו...`); 
+    }
     input.addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
 </script>
 
