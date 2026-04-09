@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>אפליקציית לוח הכפל של ליה ✨</title>
+    <title>אפליקציית הכפל של ליה ✨</title>
     <style>
         :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --white: #ffffff; --accent: #ffd1dc; --gold: #FFD700; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
@@ -16,49 +16,41 @@
         .progress-section { padding: 5px 15px; }
         .progress-bar-bg { background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-top: 5px; }
         .progress-bar-fill { background: var(--main); height: 100%; width: 0%; transition: 0.5s; }
-        .progress-text { font-size: 0.8rem; font-weight: bold; color: var(--secondary); display: block; text-align: center; }
 
         .targets-map { display: flex; justify-content: space-around; background: #fff; margin: 10px; padding: 10px; border-radius: 15px; border: 1px solid var(--accent); }
-        .target-item { font-size: 0.75rem; text-align: center; opacity: 0.4; transition: 0.3s; }
+        .target-item { font-size: 0.75rem; text-align: center; opacity: 0.4; }
         .target-item.active { opacity: 1; transform: scale(1.05); font-weight: bold; color: var(--main); }
 
         .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 20px; text-align: center; box-sizing: border-box; position: relative; }
         .title { font-size: 2.2rem; color: var(--secondary); margin-bottom: 20px; font-weight: bold; }
-        .subtitle { font-size: 1.3rem; margin: 10px 0; color: var(--main); font-weight: bold; }
-
+        
         .btn-group { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
         .btn { padding: 12px 25px; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn-cat { background: white; color: var(--secondary); border: 2px solid var(--secondary); }
-        .btn-cat.active { background: var(--secondary); color: white; }
         .btn-diff { background: var(--accent); color: var(--text); }
         .btn-diff.active { background: var(--main); color: white; }
         .btn-start { background: #4caf50; color: white; width: 220px; font-size: 1.5rem; margin-top: 15px; }
 
         #gameArea { display: none; }
-        .home-btn { position: absolute; top: 10px; right: 10px; background: white; border: 2px solid var(--main); border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .top-btns { position: absolute; top: 10px; width: 90%; display: flex; justify-content: space-between; }
+        .icon-btn { background: white; border: 2px solid var(--main); border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
-        #emoji { font-size: 5rem; height: 90px; }
         .question { font-size: 6rem; font-weight: 900; margin: 5px 0; }
         input { border: 5px solid var(--main); border-radius: 20px; width: 220px; font-size: 4rem; text-align: center; outline: none; background: white; }
 
-        .game-btns { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-top: 20px; }
-        .btn-action { flex: 1; padding: 15px; border-radius: 15px; border: none; font-size: 1.4rem; color: white; font-weight: bold; cursor: pointer; }
-        .btn-ok { background: #4caf50; }
-        .btn-hint { background: #ff9800; }
-
-        #winOverlay { display: none; position: fixed; inset: 0; background: white; z-index: 2000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .win-box { background: var(--main); color: white; padding: 30px; border-radius: 30px; border: 8px solid var(--gold); }
+        .sync-box { margin-top: 20px; font-size: 0.8rem; background: #eee; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="winOverlay">
-    <div class="win-box">
-        <h1>👑 ליה המלכה! 👑</h1>
-        <h2>הגעת ל-5 גביעים!</h2>
-        <p style="font-size: 2rem; font-weight: bold;">הפתעה ענקית מאבא ואמא מחכה לך! 🎁</p>
-        <button class="btn btn-cat" style="background:white;" onclick="location.reload()">שחקי שוב</button>
-    </div>
+<div id="syncOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:3000; color:white; padding:20px; text-align:center; direction:rtl;">
+    <h3>העברת התקדמות מכשיר 📲</h3>
+    <p>כדי להעביר את המדליות למכשיר אחר, העתיקי את הקוד:</p>
+    <input id="exportCode" style="font-size:1rem; width:100%; border:none; padding:10px;" readonly>
+    <p>כדי לטעון קוד ממכשיר אחר, הדביקי אותו כאן:</p>
+    <input id="importCode" style="font-size:1rem; width:100%; border:none; padding:10px;" placeholder="הדביקי קוד כאן">
+    <br><br>
+    <button class="btn" onclick="importData()" style="background:var(--main); color:white;">טעינת נתונים</button>
+    <button class="btn" onclick="document.getElementById('syncOverlay').style.display='none'" style="background:gray; color:white;">סגור</button>
 </div>
 
 <div class="dashboard">
@@ -68,7 +60,6 @@
         <div class="stat-item"><span class="stat-num" id="trophies">0</span><span class="stat-label">🏆 גביעים</span></div>
     </div>
     <div class="progress-section">
-        <span class="progress-text" id="progText">עוד 10 נקודות למדליה הבאה!</span>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="barFill"></div></div>
     </div>
 </div>
@@ -80,115 +71,86 @@
 </div>
 
 <div class="screen" id="lobby">
-    <div class="title">אפליקציית הכפל של ליה ✨</div>
-    <div class="subtitle">באיזו כיתה את, ליה?</div>
+    <div class="title">האפליקציה של ליה ✨</div>
     <div class="btn-group">
-        <button class="btn btn-cat active" id="catB" onclick="setCat('B')">כיתה ב'</button>
-        <button class="btn btn-cat" id="catG" onclick="setCat('G')">כיתה ג'</button>
+        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל (עד 5)</button>
+        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני (עד 10)</button>
+        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר (עד 15)</button>
     </div>
-    <div class="subtitle">בחרי רמת קושי:</div>
-    <div class="btn-group">
-        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל 😊</button>
-        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני 🤔</button>
-        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר 🔥</button>
-    </div>
-    <button class="btn btn-start" onclick="startGame()">בואי נתחיל! 🚀</button>
+    <button class="btn btn-start" onclick="startGame()">בואי נשחק! 🚀</button>
+    <div class="sync-box" onclick="showSync()">לחצי כאן להעברת הנתונים למכשיר אחר 🔄</div>
 </div>
 
 <div class="screen" id="gameArea">
-    <button class="home-btn" onclick="goHome()">🏠</button>
-    <div id="emoji"></div>
-    <div class="question" id="q"></div>
-    <input type="number" id="ans" inputmode="numeric" placeholder="?">
-    <div class="game-btns">
-        <button class="btn-action btn-ok" onclick="check()">בדקתי! ✅</button>
-        <button class="btn-action btn-hint" onclick="showHint()">רמז ✨</button>
+    <div class="top-btns">
+        <button class="icon-btn" onclick="goHome()">🏠</button>
+        <button class="icon-btn" onclick="showSync()">🔄</button>
     </div>
+    <div id="emoji" style="font-size:4rem; height:80px;"></div>
+    <div class="question" id="q"></div>
+    <input type="number" id="ans" inputmode="numeric">
+    <button class="btn btn-start" onclick="check()" style="background:#4caf50;">בדיקה ✅</button>
 </div>
 
 <script>
-    let s=0, cat='B', diff=1, n1, n2, ansVal;
-    const input = document.getElementById('ans');
+    let s = parseInt(localStorage.getItem('liaScore')) || 0;
+    let diff = 1, n1, n2, ansVal;
 
-    function setCat(c) { cat=c; document.getElementById('catB').classList.toggle('active', c==='B'); document.getElementById('catG').classList.toggle('active', c==='G'); }
-    function setDiff(d) { diff=d; for(let i=1; i<=3; i++) document.getElementById('d'+i).classList.toggle('active', i===d); }
-    
-    function startGame() { 
-        document.getElementById('lobby').style.display='none'; 
-        document.getElementById('gameArea').style.display='flex'; 
-        next(); 
-    }
+    updateStats();
 
-    function goHome() {
-        document.getElementById('lobby').style.display='flex'; 
-        document.getElementById('gameArea').style.display='none'; 
-    }
+    function setDiff(d) { diff = d; for(let i=1; i<=3; i++) document.getElementById('d'+i).classList.toggle('active', i===d); }
+    function startGame() { document.getElementById('lobby').style.display='none'; document.getElementById('gameArea').style.display='flex'; next(); }
+    function goHome() { document.getElementById('lobby').style.display='flex'; document.getElementById('gameArea').style.display='none'; }
 
     function next() {
-        if (cat === 'B') {
-            if (diff === 1) { // קליל ב' (משודרג)
-                n1 = [2, 3, 4, 5, 10][Math.floor(Math.random() * 5)];
-                n2 = Math.floor(Math.random() * 9) + 2; // 2-10
-            } else if (diff === 2) {
-                n1 = [3, 4, 5, 6, 11, 12][Math.floor(Math.random() * 6)];
-                n2 = Math.floor(Math.random() * 11) + 2;
-            } else { // מאתגר ב'
-                n1 = [11, 12, 13, 15, 20, 25][Math.floor(Math.random() * 6)];
-                n2 = Math.floor(Math.random() * 6) + 2; // 2-7
-            }
-        } else { // כיתה ג'
-            if (diff === 1) { // קליל ג' (משודרג)
-                n1 = [4, 6, 7, 8][Math.floor(Math.random() * 4)];
-                n2 = Math.floor(Math.random() * 9) + 2;
-            } else if (diff === 2) {
-                n1 = [7, 8, 9, 12, 14][Math.floor(Math.random() * 5)];
-                n2 = Math.floor(Math.random() * 11) + 3;
-            } else { // מאתגר ג'
-                let choice = Math.random();
-                if (choice < 0.6) {
-                    n1 = [13, 14, 15, 16, 17, 18, 19][Math.floor(Math.random() * 7)];
-                    n2 = Math.floor(Math.random() * 7) + 4; // 4-10
-                } else {
-                    n1 = [30, 40, 50, 60, 70][Math.floor(Math.random() * 5)];
-                    n2 = Math.floor(Math.random() * 8) + 3; // 3-10
-                }
-            }
-        }
+        if (diff === 1) { n1 = Math.floor(Math.random() * 4) + 2; n2 = Math.floor(Math.random() * 9) + 2; }
+        else if (diff === 2) { n1 = Math.floor(Math.random() * 5) + 6; n2 = Math.floor(Math.random() * 9) + 2; }
+        else { n1 = Math.floor(Math.random() * 6) + 10; n2 = Math.floor(Math.random() * 11) + 2; }
         ansVal = n1 * n2;
         document.getElementById('q').innerText = `${n1} × ${n2}`;
-        input.value = ""; document.getElementById('emoji').innerText = ""; input.focus();
+        document.getElementById('ans').value = ""; document.getElementById('ans').focus();
     }
 
     function check() {
-        if(parseInt(input.value) === ansVal) {
-            s++; updateStats();
+        if(parseInt(document.getElementById('ans').value) === ansVal) {
+            s++; localStorage.setItem('liaScore', s); updateStats();
             document.getElementById('emoji').innerText = "😊";
-            if(Math.floor(s/100) >= 5) document.getElementById('winOverlay').style.display = "flex";
-            else setTimeout(next, 800);
+            setTimeout(next, 800);
         } else { document.getElementById('emoji').innerText = "😟"; }
     }
 
     function updateStats() {
         document.getElementById('score').innerText = s;
-        let m = Math.floor(s/10);
-        let t = Math.floor(m/10);
+        let m = Math.floor(s/10), t = Math.floor(m/10);
         document.getElementById('medals').innerText = m;
         document.getElementById('trophies').innerText = t;
-
-        let prog = (s % 10) * 10;
-        document.getElementById('barFill').style.width = (s>0 && s%10===0 ? 100 : prog) + "%";
-        document.getElementById('progText').innerText = s%10===0 && s>0 ? "כל הכבוד! מדליה! 🎖️" : `עוד ${10-(s%10)} נקודות למדליה!`;
-
+        document.getElementById('barFill').style.width = (s % 10) * 10 + "%";
         if(s >= 10) document.getElementById('t1').classList.add('active');
         if(s >= 100) document.getElementById('t2').classList.add('active');
-        if(s >= 500) document.getElementById('t3').classList.add('active');
+        if(s >= 500) { document.getElementById('t3').classList.add('active'); alert("הפתעה מאבא ואמא! 🎁"); }
     }
 
-    function showHint() { 
-        alert(`ליה, הנה טיפ לחישוב מהיר:\nאת ${n1} כפול ${n2} אפשר לפרק!\nלמשל: 12 כפול 5 זה כמו (10 כפול 5) ועוד (2 כפול 5).`); 
+    // פונקציות סנכרון
+    function showSync() {
+        document.getElementById('syncOverlay').style.display = 'flex';
+        document.getElementById('exportCode').value = btoa(s); // קידוד פשוט של הניקוד
     }
-    input.addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
+
+    function importData() {
+        try {
+            let code = document.getElementById('importCode').value;
+            let newScore = parseInt(atob(code));
+            if(!isNaN(newScore)) {
+                s = newScore;
+                localStorage.setItem('liaScore', s);
+                updateStats();
+                alert("הנתונים נטענו בהצלחה! ✨");
+                document.getElementById('syncOverlay').style.display = 'none';
+            }
+        } catch(e) { alert("קוד לא תקין!"); }
+    }
+
+    document.getElementById('ans').addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
 </script>
-
 </body>
 </html>
