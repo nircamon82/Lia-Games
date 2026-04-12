@@ -3,151 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>אפליקציית הכפל של ליה ✨</title>
+    <title>הכפל של ליה - עיר האורות הצבעונית 🚀</title>
     <style>
-        :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --white: #ffffff; --accent: #ffd1dc; --gold: #FFD700; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+        :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --night: #0a0a2e; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
         
-        .dashboard { background: var(--white); padding: 15px; border-bottom: 4px solid var(--main); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .stats-row { display: flex; justify-content: space-around; align-items: center; }
-        .stat-num { font-size: 1.8rem; font-weight: 900; color: var(--main); display: block; text-align: center; }
-        .stat-label { font-size: 0.8rem; font-weight: bold; color: var(--secondary); }
+        /* דשבורד */
+        .dashboard { background: white; padding: 10px; border-bottom: 3px solid var(--main); display: flex; justify-content: space-around; z-index: 100; position: relative; }
+        .stat-val { font-size: 1.5rem; font-weight: bold; color: var(--main); display: block; text-align: center; }
+        .stat-label { font-size: 0.7rem; font-weight: bold; }
 
-        .progress-section { padding: 5px 15px; }
-        .progress-bar-bg { background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin-top: 5px; }
-        .progress-bar-fill { background: var(--main); height: 100%; width: 0%; transition: 0.5s; }
-
-        .targets-map { display: flex; justify-content: space-around; background: #fff; margin: 10px; padding: 10px; border-radius: 15px; border: 1px solid var(--accent); }
-        .target-item { font-size: 0.75rem; text-align: center; opacity: 0.4; }
-        .target-item.active { opacity: 1; transform: scale(1.05); font-weight: bold; color: var(--main); }
-
-        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 20px; text-align: center; box-sizing: border-box; position: relative; }
-        .title { font-size: 2.2rem; color: var(--secondary); margin-bottom: 20px; font-weight: bold; }
-        
-        .btn-group { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-        .btn { padding: 12px 25px; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn-diff { background: var(--accent); color: var(--text); }
+        /* מסך בחירה */
+        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center; }
+        .btn { padding: 15px 30px; border: none; border-radius: 25px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin: 10px; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .btn-diff { background: #ffd1dc; }
         .btn-diff.active { background: var(--main); color: white; }
-        .btn-start { background: #4caf50; color: white; width: 220px; font-size: 1.5rem; margin-top: 15px; }
+        .btn-missile { background: var(--night); color: #00d4ff; border: 2px solid #00d4ff; box-shadow: 0 0 15px #00d4ff; }
 
-        #gameArea { display: none; }
-        .top-btns { position: absolute; top: 10px; width: 90%; display: flex; justify-content: space-between; }
-        .icon-btn { background: white; border: 2px solid var(--main); border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* מצב טילים */
+        #gameArea { display: none; width: 100%; height: 100%; position: relative; }
+        #gameArea.missile-mode { background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); }
+
+        /* כוכבים מנצנצים */
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* העיר הצבעונית */
+        .city-container { position: absolute; bottom: 0; width: 100%; height: 160px; display: flex; align-items: flex-end; justify-content: flex-start; z-index: 20; overflow: hidden; }
         
-        .question { font-size: 6rem; font-weight: 900; margin: 5px 0; }
-        input { border: 5px solid var(--main); border-radius: 20px; width: 220px; font-size: 4rem; text-align: center; outline: none; background: white; }
+        .building { 
+            width: 55px; flex-shrink: 0; position: relative; margin-right: 6px; 
+            border: 2px solid rgba(255,255,255,0.1);
+            background-image: radial-gradient(rgba(255, 255, 0, 0.9) 15%, transparent 20%);
+            background-size: 14px 18px; background-position: 5px 5px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
 
-        .sync-box { margin-top: 20px; font-size: 0.8rem; background: #eee; padding: 10px; border-radius: 10px; }
+        .building.house::before { 
+            content: ''; position: absolute; top: -25px; left: -2px; 
+            border-left: 29.5px solid transparent; border-right: 29.5px solid transparent; 
+            border-bottom: 25px solid #444; 
+        }
+        
+        /* צבעי בניינים */
+        .b-pink { background-color: #ff4d94; }
+        .b-blue { background-color: #4a90e2; }
+        .b-orange { background-color: #ff9f43; }
+        .b-purple { background-color: #8e44ad; }
+        .b-green { background-color: #27ae60; }
+
+        /* גבהים */
+        .h-s { height: 65px; } .h-m { height: 105px; } .h-l { height: 145px; }
+
+        /* משאית משגר */
+        .launcher-truck { position: absolute; bottom: 10px; width: 85px; height: 45px; z-index: 40; transition: left 0.6s ease-out; }
+        .truck-body { background: #2c3e50; width: 60px; height: 22px; border-radius: 4px; position: absolute; bottom: 8px; right: 0; border: 1px solid #3498db; }
+        .truck-cabin { background: #34495e; width: 25px; height: 35px; border-radius: 4px; position: absolute; bottom: 8px; left: 0; border-right: 2px solid #2c3e50; }
+        .truck-wheel { background: #111; width: 12px; height: 12px; border-radius: 50%; position: absolute; bottom: 0px; border: 1.5px solid #777; }
+
+        /* טילים */
+        .falling-missile { position: absolute; top: -80px; font-size: 3.2rem; transform: rotate(180deg); transition: top 6s linear; z-index: 15; width: 60px; text-align: center; filter: drop-shadow(0 0 15px orange); }
+        .interceptor { position: absolute; bottom: 55px; width: 8px; height: 0; background: linear-gradient(to top, transparent, #fff, #00d4ff); border-radius: 50%; transition: 0.4s ease-out; z-index: 25; display: none; box-shadow: 0 0 25px #00d4ff; }
+
+        .question-box { position: absolute; width: 100%; top: 15%; text-align: center; z-index: 50; }
+        .question { font-size: 5.5rem; font-weight: 900; color: #333; margin: 0; }
+        .missile-mode .question { color: white; text-shadow: 0 0 25px #00d4ff; }
+        .success-msg { color: white !important; font-weight: bold; font-size: 2.8rem; text-shadow: 0 0 20px #4caf50; }
+        
+        input { border: 6px solid var(--main); border-radius: 20px; font-size: 3.8rem; width: 190px; text-align: center; outline: none; margin-top: 10px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .home-btn { position: absolute; top: 70px; right: 20px; background: white; border-radius: 50%; width: 55px; height: 55px; border: 3px solid var(--main); cursor: pointer; z-index: 100; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div id="syncOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:3000; color:white; padding:20px; text-align:center; direction:rtl;">
-    <h3>העברת התקדמות מכשיר 📲</h3>
-    <p>כדי להעביר את המדליות למכשיר אחר, העתיקי את הקוד:</p>
-    <input id="exportCode" style="font-size:1rem; width:100%; border:none; padding:10px;" readonly>
-    <p>כדי לטעון קוד ממכשיר אחר, הדביקי אותו כאן:</p>
-    <input id="importCode" style="font-size:1rem; width:100%; border:none; padding:10px;" placeholder="הדביקי קוד כאן">
-    <br><br>
-    <button class="btn" onclick="importData()" style="background:var(--main); color:white;">טעינת נתונים</button>
-    <button class="btn" onclick="document.getElementById('syncOverlay').style.display='none'" style="background:gray; color:white;">סגור</button>
-</div>
-
-<div class="dashboard">
-    <div class="stats-row">
-        <div class="stat-item"><span class="stat-num" id="score">0</span><span class="stat-label">⭐ נקודות</span></div>
-        <div class="stat-item"><span class="stat-num" id="medals">0</span><span class="stat-label">🎖️ מדליות</span></div>
-        <div class="stat-item"><span class="stat-num" id="trophies">0</span><span class="stat-label">🏆 גביעים</span></div>
-    </div>
-    <div class="progress-section">
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="barFill"></div></div>
-    </div>
-</div>
-
-<div class="targets-map">
-    <div class="target-item" id="t1">🎖️<br>מדליה</div>
-    <div class="target-item" id="t2">🏆<br>גביע</div>
-    <div class="target-item" id="t3">🎁<br>הפתעה!</div>
+<div class="dashboard" id="dash">
+    <div class="stat"><span class="stat-val" id="score">0</span><span class="stat-label">⭐ נקודות</span></div>
+    <div class="stat"><span class="stat-val" id="medals">0</span><span class="stat-label">🎖️ מדליות</span></div>
+    <div class="stat"><span class="stat-val" id="trophies">0</span><span class="stat-label">🏆 גביעים</span></div>
 </div>
 
 <div class="screen" id="lobby">
-    <div class="title">האפליקציה של ליה ✨</div>
+    <h1 style="color: var(--secondary); font-size: 2.5rem;">אפליקציית הכפל של ליה ✨</h1>
     <div class="btn-group">
-        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל (עד 5)</button>
-        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני (עד 10)</button>
-        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר (עד 15)</button>
+        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל</button>
+        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני</button>
+        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר</button>
     </div>
-    <button class="btn btn-start" onclick="startGame()">בואי נשחק! 🚀</button>
-    <div class="sync-box" onclick="showSync()">לחצי כאן להעברת הנתונים למכשיר אחר 🔄</div>
+    <button class="btn" style="background:#4caf50; color:white; width:300px;" onclick="start(false)">תרגול רגיל 😊</button>
+    <button class="btn btn-missile" onclick="start(true)">🚀 אתגר הטילים! 🚀</button>
 </div>
 
-<div class="screen" id="gameArea">
-    <div class="top-btns">
-        <button class="icon-btn" onclick="goHome()">🏠</button>
-        <button class="icon-btn" onclick="showSync()">🔄</button>
+<div id="gameArea">
+    <div id="stars"></div>
+    <button class="home-btn" onclick="location.reload()">🏠</button>
+    
+    <div class="city-container" id="city"></div>
+
+    <div class="launcher-truck" id="truck">
+        <div class="truck-cabin"></div><div class="truck-body"></div>
+        <div class="truck-wheel" style="left: 8px;"></div><div class="truck-wheel" style="right: 8px;"></div>
+        <div class="truck-wheel" style="right: 28px;"></div>
     </div>
-    <div id="emoji" style="font-size:4rem; height:80px;"></div>
-    <div class="question" id="q"></div>
-    <input type="number" id="ans" inputmode="numeric">
-    <button class="btn btn-start" onclick="check()" style="background:#4caf50;">בדיקה ✅</button>
+    
+    <div class="interceptor" id="interceptor"></div>
+    <div id="missile" class="falling-missile">🚀</div>
+    
+    <div class="question-box">
+        <div id="emoji" style="height: 60px;"></div>
+        <div id="q" class="question"></div>
+        <input type="number" id="ans" inputmode="numeric" placeholder="?">
+        <br>
+        <button class="btn" onclick="check()" style="background:#4caf50; color:white; margin-top:20px; width: 240px; font-size: 1.6rem;">שגרי יירוט! 💥</button>
+    </div>
 </div>
 
 <script>
     let s = parseInt(localStorage.getItem('liaScore')) || 0;
-    let diff = 1, n1, n2, ansVal;
+    let diff = 1, n1, n2, correct, isMissile = false, timer;
 
-    updateStats();
+    // בניית עיר צבעונית
+    const city = document.getElementById('city');
+    const colors = ['b-pink', 'b-blue', 'b-orange', 'b-purple', 'b-green'];
+    const sizes = ['h-s house', 'h-m house', 'h-l', 'h-m'];
+    
+    for(let i=0; i<30; i++) {
+        let b = document.createElement('div');
+        b.className = 'building ' + colors[Math.floor(Math.random()*colors.length)] + ' ' + sizes[Math.floor(Math.random()*sizes.length)];
+        city.appendChild(b);
+    }
 
-    function setDiff(d) { diff = d; for(let i=1; i<=3; i++) document.getElementById('d'+i).classList.toggle('active', i===d); }
-    function startGame() { document.getElementById('lobby').style.display='none'; document.getElementById('gameArea').style.display='flex'; next(); }
-    function goHome() { document.getElementById('lobby').style.display='flex'; document.getElementById('gameArea').style.display='none'; }
+    // כוכבים
+    for(let i=0; i<60; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random()*3+'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random()*100+'%';
+        star.style.top = Math.random()*60+'%';
+        star.style.animationDelay = Math.random()*2+'s';
+        document.getElementById('stars').appendChild(star);
+    }
+
+    updateUI();
+
+    function setDiff(d) { diff = d; document.querySelectorAll('.btn-diff').forEach((b,i)=>b.classList.toggle('active', i+1==d)); }
+
+    function start(missile) {
+        isMissile = missile;
+        document.getElementById('lobby').style.display = 'none';
+        document.getElementById('gameArea').style.display = 'block';
+        if(missile) document.getElementById('gameArea').classList.add('missile-mode');
+        next();
+    }
 
     function next() {
-        if (diff === 1) { n1 = Math.floor(Math.random() * 4) + 2; n2 = Math.floor(Math.random() * 9) + 2; }
-        else if (diff === 2) { n1 = Math.floor(Math.random() * 5) + 6; n2 = Math.floor(Math.random() * 9) + 2; }
-        else { n1 = Math.floor(Math.random() * 6) + 10; n2 = Math.floor(Math.random() * 11) + 2; }
-        ansVal = n1 * n2;
+        clearTimeout(timer);
+        document.getElementById('emoji').className = "";
+        if (diff === 1) { n1 = Math.floor(Math.random()*4)+2; n2 = Math.floor(Math.random()*9)+2; }
+        else if (diff === 2) { n1 = Math.floor(Math.random()*5)+6; n2 = Math.floor(Math.random()*9)+2; }
+        else { n1 = Math.floor(Math.random()*6)+10; n2 = Math.floor(Math.random()*11)+2; }
+        
+        correct = n1 * n2;
         document.getElementById('q').innerText = `${n1} × ${n2}`;
-        document.getElementById('ans').value = ""; document.getElementById('ans').focus();
+        document.getElementById('ans').value = "";
+        document.getElementById('ans').focus();
+
+        if(isMissile) {
+            const m = document.getElementById('missile');
+            const truck = document.getElementById('truck');
+            let targetPos = Math.random() * 75 + 10;
+            m.style.transition = 'none';
+            m.style.top = '-80px';
+            m.style.left = targetPos + '%';
+            truck.style.left = `calc(${targetPos}% - 40px)`;
+            setTimeout(() => { m.style.transition = 'top 6s linear'; m.style.top = '72%'; }, 50);
+            timer = setTimeout(() => {
+                document.getElementById('emoji').innerText = "😟 הטיל פגע!";
+                setTimeout(next, 1500);
+            }, 6000);
+        }
     }
 
     function check() {
-        if(parseInt(document.getElementById('ans').value) === ansVal) {
-            s++; localStorage.setItem('liaScore', s); updateStats();
-            document.getElementById('emoji').innerText = "😊";
-            setTimeout(next, 800);
-        } else { document.getElementById('emoji').innerText = "😟"; }
+        if(parseInt(document.getElementById('ans').value) === correct) {
+            if(isMissile) launchInterceptor();
+            s++;
+            localStorage.setItem('liaScore', s);
+            updateUI();
+            const emoji = document.getElementById('emoji');
+            emoji.innerText = "יירוט מוצלח! ✨";
+            emoji.classList.add('success-msg');
+            setTimeout(next, 1200);
+        } else {
+            document.getElementById('emoji').innerText = "😟 נסי שוב!";
+            document.getElementById('emoji').classList.remove('success-msg');
+        }
     }
 
-    function updateStats() {
+    function launchInterceptor() {
+        const icept = document.getElementById('interceptor');
+        const m = document.getElementById('missile');
+        icept.style.left = m.style.left;
+        icept.style.display = 'block';
+        icept.style.height = '600px';
+        setTimeout(() => {
+            icept.style.display = 'none';
+            icept.style.height = '0';
+            m.style.transition = 'none';
+            m.style.top = '-150px'; 
+        }, 400);
+    }
+
+    function updateUI() {
         document.getElementById('score').innerText = s;
-        let m = Math.floor(s/10), t = Math.floor(m/10);
-        document.getElementById('medals').innerText = m;
-        document.getElementById('trophies').innerText = t;
-        document.getElementById('barFill').style.width = (s % 10) * 10 + "%";
-        if(s >= 10) document.getElementById('t1').classList.add('active');
-        if(s >= 100) document.getElementById('t2').classList.add('active');
-        if(s >= 500) { document.getElementById('t3').classList.add('active'); alert("הפתעה מאבא ואמא! 🎁"); }
-    }
-
-    // פונקציות סנכרון
-    function showSync() {
-        document.getElementById('syncOverlay').style.display = 'flex';
-        document.getElementById('exportCode').value = btoa(s); // קידוד פשוט של הניקוד
-    }
-
-    function importData() {
-        try {
-            let code = document.getElementById('importCode').value;
-            let newScore = parseInt(atob(code));
-            if(!isNaN(newScore)) {
-                s = newScore;
-                localStorage.setItem('liaScore', s);
-                updateStats();
-                alert("הנתונים נטענו בהצלחה! ✨");
-                document.getElementById('syncOverlay').style.display = 'none';
-            }
-        } catch(e) { alert("קוד לא תקין!"); }
+        document.getElementById('medals').innerText = Math.floor(s/10);
+        document.getElementById('trophies').innerText = Math.floor(s/100);
     }
 
     document.getElementById('ans').addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
