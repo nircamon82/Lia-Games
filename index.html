@@ -3,224 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>הכפל של ליה - עיר האורות הצבעונית 🚀</title>
+    <title>הכפל של ליה - הגרסה הסופית 🚀</title>
     <style>
-        :root { --main: #ff66b2; --secondary: #9b59b6; --bg: #fdf2f8; --night: #0a0a2e; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow: hidden; }
+        :root { --main: #ff66b2; --secondary: #9b59b6; --night: #0a0a2e; --sky: #1b2735; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background: #fdf2f8; overflow: hidden; }
         
         /* דשבורד */
-        .dashboard { background: white; padding: 10px; border-bottom: 3px solid var(--main); display: flex; justify-content: space-around; z-index: 100; position: relative; }
+        .dashboard { background: white; padding: 10px; border-bottom: 3px solid var(--main); display: flex; justify-content: space-around; z-index: 100; position: relative; color: black; }
         .stat-val { font-size: 1.5rem; font-weight: bold; color: var(--main); display: block; text-align: center; }
         .stat-label { font-size: 0.7rem; font-weight: bold; }
 
-        /* מסך בחירה */
-        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center; }
-        .btn { padding: 15px 30px; border: none; border-radius: 25px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin: 10px; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn-diff { background: #ffd1dc; }
-        .btn-diff.active { background: var(--main); color: white; }
-        .btn-missile { background: var(--night); color: #00d4ff; border: 2px solid #00d4ff; box-shadow: 0 0 15px #00d4ff; }
-
-        /* מצב טילים */
+        /* מסך לובי */
+        .screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 85vh; text-align: center; padding: 20px; box-sizing: border-box; }
         #gameArea { display: none; width: 100%; height: 100%; position: relative; }
-        #gameArea.missile-mode { background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); }
 
-        /* כוכבים מנצנצים */
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite ease-in-out; }
+        h1 { color: var(--secondary); font-size: 2.5rem; margin-bottom: 10px; }
+        .section-title { font-weight: bold; margin-top: 15px; color: #555; }
+        .btn-group { display: flex; gap: 10px; margin: 10px 0; }
+        .btn { padding: 12px 25px; border: none; border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .btn-toggle { background: #ffd1dc; color: #333; }
+        .btn-toggle.active { background: var(--main); color: white; }
+        .btn-start { background: #4caf50; color: white; width: 260px; margin-top: 15px; font-size: 1.3rem; }
+        .btn-missile { background: var(--night); color: #00d4ff; border: 2px solid #00d4ff; width: 260px; }
+
+        /* גרפיקה של אתגר הטילים */
+        .missile-theme { background: radial-gradient(circle at center, var(--sky) 0%, #090a0f 100%) !important; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* העיר הצבעונית */
-        .city-container { position: absolute; bottom: 0; width: 100%; height: 160px; display: flex; align-items: flex-end; justify-content: flex-start; z-index: 20; overflow: hidden; }
-        
-        .building { 
-            width: 55px; flex-shrink: 0; position: relative; margin-right: 6px; 
-            border: 2px solid rgba(255,255,255,0.1);
-            background-image: radial-gradient(rgba(255, 255, 0, 0.9) 15%, transparent 20%);
-            background-size: 14px 18px; background-position: 5px 5px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
+        .city { position: absolute; bottom: 0; width: 100%; height: 160px; display: flex; align-items: flex-end; z-index: 10; pointer-events: none; }
+        .building { width: 45px; flex-shrink: 0; margin-right: 5px; background-image: radial-gradient(circle, #ffeb3b 15%, transparent 20%); background-size: 12px 18px; border-top-left-radius: 5px; border-top-right-radius: 5px; }
 
-        .building.house::before { 
-            content: ''; position: absolute; top: -25px; left: -2px; 
-            border-left: 29.5px solid transparent; border-right: 29.5px solid transparent; 
-            border-bottom: 25px solid #444; 
-        }
-        
-        /* צבעי בניינים */
-        .b-pink { background-color: #ff4d94; }
-        .b-blue { background-color: #4a90e2; }
-        .b-orange { background-color: #ff9f43; }
-        .b-purple { background-color: #8e44ad; }
-        .b-green { background-color: #27ae60; }
+        .battery { position: absolute; bottom: 20px; left: 40px; width: 60px; height: 40px; background: #2d3436; border-radius: 5px; z-index: 40; border: 2px solid #636e72; }
+        .battery::after { content: '🚀'; position: absolute; top: -25px; left: 15px; font-size: 1.5rem; transform: rotate(-45deg); }
 
-        /* גבהים */
-        .h-s { height: 65px; } .h-m { height: 105px; } .h-l { height: 145px; }
+        .falling-missile { position: absolute; top: -150px; font-size: 3rem; transform: rotate(180deg); z-index: 15; width: 60px; text-align: center; filter: drop-shadow(0 0 15px orange); transition: top 7s linear; }
+        .interceptor { position: absolute; width: 30px; height: 30px; font-size: 2rem; z-index: 25; display: none; filter: drop-shadow(0 0 10px white); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .boom { position: absolute; width: 100px; height: 100px; background: radial-gradient(circle, #ff5722, #ffeb3b, transparent 70%); border-radius: 50%; display: none; z-index: 30; transform: scale(1); pointer-events: none; }
 
-        /* משאית משגר */
-        .launcher-truck { position: absolute; bottom: 10px; width: 85px; height: 45px; z-index: 40; transition: left 0.6s ease-out; }
-        .truck-body { background: #2c3e50; width: 60px; height: 22px; border-radius: 4px; position: absolute; bottom: 8px; right: 0; border: 1px solid #3498db; }
-        .truck-cabin { background: #34495e; width: 25px; height: 35px; border-radius: 4px; position: absolute; bottom: 8px; left: 0; border-right: 2px solid #2c3e50; }
-        .truck-wheel { background: #111; width: 12px; height: 12px; border-radius: 50%; position: absolute; bottom: 0px; border: 1.5px solid #777; }
+        /* אזור השאלה */
+        .question-box { position: absolute; width: 100%; top: 12%; text-align: center; z-index: 50; }
+        .question { font-size: 5rem; font-weight: 900; color: #333; margin: 0; }
+        .missile-text .question { color: white; text-shadow: 0 0 20px #00d4ff; }
+        input { border: 6px solid var(--main); border-radius: 20px; font-size: 3.5rem; width: 170px; text-align: center; outline: none; background: white; margin-top: 10px; }
+        #emoji { height: 50px; font-weight: bold; font-size: 1.5rem; margin-bottom: 5px; }
+        .missile-text #emoji { color: white; text-shadow: 0 0 10px black; }
 
-        /* טילים */
-        .falling-missile { position: absolute; top: -80px; font-size: 3.2rem; transform: rotate(180deg); transition: top 6s linear; z-index: 15; width: 60px; text-align: center; filter: drop-shadow(0 0 15px orange); }
-        .interceptor { position: absolute; bottom: 55px; width: 8px; height: 0; background: linear-gradient(to top, transparent, #fff, #00d4ff); border-radius: 50%; transition: 0.4s ease-out; z-index: 25; display: none; box-shadow: 0 0 25px #00d4ff; }
-
-        .question-box { position: absolute; width: 100%; top: 15%; text-align: center; z-index: 50; }
-        .question { font-size: 5.5rem; font-weight: 900; color: #333; margin: 0; }
-        .missile-mode .question { color: white; text-shadow: 0 0 25px #00d4ff; }
-        .success-msg { color: white !important; font-weight: bold; font-size: 2.8rem; text-shadow: 0 0 20px #4caf50; }
-        
-        input { border: 6px solid var(--main); border-radius: 20px; font-size: 3.8rem; width: 190px; text-align: center; outline: none; margin-top: 10px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .home-btn { position: absolute; top: 70px; right: 20px; background: white; border-radius: 50%; width: 55px; height: 55px; border: 3px solid var(--main); cursor: pointer; z-index: 100; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; }
+        .home-btn { position: absolute; top: 70px; right: 20px; background: white; border-radius: 50%; width: 50px; height: 50px; border: 3px solid var(--main); cursor: pointer; z-index: 100; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; color: black; }
     </style>
 </head>
 <body>
 
-<div class="dashboard" id="dash">
+<div class="dashboard">
     <div class="stat"><span class="stat-val" id="score">0</span><span class="stat-label">⭐ נקודות</span></div>
     <div class="stat"><span class="stat-val" id="medals">0</span><span class="stat-label">🎖️ מדליות</span></div>
     <div class="stat"><span class="stat-val" id="trophies">0</span><span class="stat-label">🏆 גביעים</span></div>
 </div>
 
-<div class="screen" id="lobby">
-    <h1 style="color: var(--secondary); font-size: 2.5rem;">אפליקציית הכפל של ליה ✨</h1>
+<div id="lobby" class="screen">
+    <h1>הכפל של ליה ✨</h1>
+    
+    <div class="section-title">בחרי כיתה:</div>
     <div class="btn-group">
-        <button class="btn btn-diff active" id="d1" onclick="setDiff(1)">קליל</button>
-        <button class="btn btn-diff" id="d2" onclick="setDiff(2)">בינוני</button>
-        <button class="btn btn-diff" id="d3" onclick="setDiff(3)">מאתגר</button>
+        <button id="classB" class="btn btn-toggle active" onclick="setGrade(2)">כיתה ב'</button>
+        <button id="classG" class="btn btn-toggle" onclick="setGrade(3)">כיתה ג'</button>
     </div>
-    <button class="btn" style="background:#4caf50; color:white; width:300px;" onclick="start(false)">תרגול רגיל 😊</button>
+
+    <div class="section-title">רמת קושי:</div>
+    <div class="btn-group">
+        <button id="d1" class="btn btn-toggle active" onclick="setDiff(1)">קליל</button>
+        <button id="d2" class="btn btn-toggle" onclick="setDiff(2)">בינוני</button>
+        <button id="d3" class="btn btn-toggle" onclick="setDiff(3)">מאתגר</button>
+    </div>
+
+    <button class="btn btn-start" onclick="start(false)">תרגול רגיל 😊</button>
     <button class="btn btn-missile" onclick="start(true)">🚀 אתגר הטילים! 🚀</button>
 </div>
 
 <div id="gameArea">
-    <div id="stars"></div>
-    <button class="home-btn" onclick="location.reload()">🏠</button>
+    <div id="starsArea"></div>
+    <button class="home-btn" onclick="backToHome()">🏠</button>
+    <div class="city" id="cityArea"></div>
+    <div class="battery" id="batteryObj"></div>
     
-    <div class="city-container" id="city"></div>
-
-    <div class="launcher-truck" id="truck">
-        <div class="truck-cabin"></div><div class="truck-body"></div>
-        <div class="truck-wheel" style="left: 8px;"></div><div class="truck-wheel" style="right: 8px;"></div>
-        <div class="truck-wheel" style="right: 28px;"></div>
-    </div>
-    
-    <div class="interceptor" id="interceptor"></div>
+    <div id="interceptor" class="interceptor">🚀</div>
     <div id="missile" class="falling-missile">🚀</div>
+    <div id="boom" class="boom"></div>
     
-    <div class="question-box">
-        <div id="emoji" style="height: 60px;"></div>
+    <div id="qBox" class="question-box">
+        <div id="emoji"></div>
         <div id="q" class="question"></div>
-        <input type="number" id="ans" inputmode="numeric" placeholder="?">
-        <br>
-        <button class="btn" onclick="check()" style="background:#4caf50; color:white; margin-top:20px; width: 240px; font-size: 1.6rem;">שגרי יירוט! 💥</button>
+        <input type="number" id="ans" inputmode="numeric" onkeypress="if(event.key==='Enter') check()">
+        <div style="margin-top: 15px;">
+            <button class="btn" style="background:#4caf50; color:white; width:150px;" onclick="check()">בדיקה</button>
+            <button class="btn" style="background:#ff9800; color:white;" onclick="getSmartHint()">רמז ✨</button>
+        </div>
     </div>
 </div>
 
 <script>
-    let s = parseInt(localStorage.getItem('liaScore')) || 0;
-    let diff = 1, n1, n2, correct, isMissile = false, timer;
+    let score = parseInt(localStorage.getItem('liaScore')) || 0;
+    let grade = 2;
+    let diff = 1;
+    let isMissileMode = false;
+    let n1, n2, correct, timer, lastN1, lastN2;
 
-    // בניית עיר צבעונית
-    const city = document.getElementById('city');
-    const colors = ['b-pink', 'b-blue', 'b-orange', 'b-purple', 'b-green'];
-    const sizes = ['h-s house', 'h-m house', 'h-l', 'h-m'];
-    
-    for(let i=0; i<30; i++) {
-        let b = document.createElement('div');
-        b.className = 'building ' + colors[Math.floor(Math.random()*colors.length)] + ' ' + sizes[Math.floor(Math.random()*sizes.length)];
-        city.appendChild(b);
+    function setGrade(g) {
+        grade = g;
+        document.getElementById('classB').classList.toggle('active', g === 2);
+        document.getElementById('classG').classList.toggle('active', g === 3);
     }
 
-    // כוכבים
-    for(let i=0; i<60; i++) {
-        let star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random()*3+'px';
-        star.style.height = star.style.width;
-        star.style.left = Math.random()*100+'%';
-        star.style.top = Math.random()*60+'%';
-        star.style.animationDelay = Math.random()*2+'s';
-        document.getElementById('stars').appendChild(star);
+    function setDiff(d) {
+        diff = d;
+        document.getElementById('d1').classList.toggle('active', d === 1);
+        document.getElementById('d2').classList.toggle('active', d === 2);
+        document.getElementById('d3').classList.toggle('active', d === 3);
     }
 
-    updateUI();
-
-    function setDiff(d) { diff = d; document.querySelectorAll('.btn-diff').forEach((b,i)=>b.classList.toggle('active', i+1==d)); }
-
-    function start(missile) {
-        isMissile = missile;
+    function start(mode) {
+        isMissileMode = mode;
         document.getElementById('lobby').style.display = 'none';
-        document.getElementById('gameArea').style.display = 'block';
-        if(missile) document.getElementById('gameArea').classList.add('missile-mode');
+        const area = document.getElementById('gameArea');
+        area.style.display = 'block';
+        
+        if(mode) {
+            area.className = 'missile-theme';
+            document.getElementById('qBox').className = 'question-box missile-text';
+            initMissileVisuals();
+        } else {
+            area.className = '';
+            document.getElementById('qBox').className = 'question-box';
+            document.getElementById('starsArea').innerHTML = '';
+            document.getElementById('cityArea').innerHTML = '';
+            document.getElementById('batteryObj').style.display = 'none';
+        }
+        updateUI();
         next();
+    }
+
+    function backToHome() {
+        clearTimeout(timer);
+        document.getElementById('gameArea').style.display = 'none';
+        document.getElementById('lobby').style.display = 'flex';
+        document.getElementById('missile').style.transition = 'none';
+        document.getElementById('missile').style.top = '-150px';
+    }
+
+    function initMissileVisuals() {
+        const city = document.getElementById('cityArea');
+        const stars = document.getElementById('starsArea');
+        document.getElementById('batteryObj').style.display = 'block';
+        city.innerHTML = ''; stars.innerHTML = '';
+        
+        for(let i=0; i<30; i++) {
+            let b = document.createElement('div');
+            b.className = 'building';
+            b.style.height = (Math.random() * 80 + 40) + 'px';
+            b.style.backgroundColor = `hsl(${Math.random()*360}, 30%, 30%)`;
+            city.appendChild(b);
+        }
+        for(let i=0; i<60; i++) {
+            let s = document.createElement('div');
+            s.className = 'star';
+            s.style.width = '2px'; s.style.height = '2px';
+            s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*60+'%';
+            stars.appendChild(s);
+        }
     }
 
     function next() {
         clearTimeout(timer);
-        document.getElementById('emoji').className = "";
-        if (diff === 1) { n1 = Math.floor(Math.random()*4)+2; n2 = Math.floor(Math.random()*9)+2; }
-        else if (diff === 2) { n1 = Math.floor(Math.random()*5)+6; n2 = Math.floor(Math.random()*9)+2; }
-        else { n1 = Math.floor(Math.random()*6)+10; n2 = Math.floor(Math.random()*11)+2; }
-        
+        const m = document.getElementById('missile');
+        document.getElementById('emoji').innerText = "";
+        m.style.transition = 'none';
+        m.style.top = '-150px';
+        document.getElementById('interceptor').style.display = 'none';
+        document.getElementById('boom').style.display = 'none';
+
+        do {
+            let range = (grade === 2) ? (4 + diff) : (7 + diff);
+            n1 = Math.floor(Math.random() * range) + 2;
+            n2 = Math.floor(Math.random() * 9) + 1;
+        } while (n1 === lastN1 && n2 === lastN2);
+
+        lastN1 = n1; lastN2 = n2;
         correct = n1 * n2;
         document.getElementById('q').innerText = `${n1} × ${n2}`;
         document.getElementById('ans').value = "";
         document.getElementById('ans').focus();
 
-        if(isMissile) {
-            const m = document.getElementById('missile');
-            const truck = document.getElementById('truck');
-            let targetPos = Math.random() * 75 + 10;
-            m.style.transition = 'none';
-            m.style.top = '-80px';
-            m.style.left = targetPos + '%';
-            truck.style.left = `calc(${targetPos}% - 40px)`;
-            setTimeout(() => { m.style.transition = 'top 6s linear'; m.style.top = '72%'; }, 50);
+        if(isMissileMode) {
+            m.style.left = (Math.random() * 60 + 20) + '%';
+            setTimeout(() => {
+                m.style.transition = 'top 7s linear';
+                m.style.top = '72%';
+            }, 100);
             timer = setTimeout(() => {
                 document.getElementById('emoji').innerText = "😟 הטיל פגע!";
-                setTimeout(next, 1500);
-            }, 6000);
+                setTimeout(next, 2000);
+            }, 7100);
         }
     }
 
     function check() {
         if(parseInt(document.getElementById('ans').value) === correct) {
-            if(isMissile) launchInterceptor();
-            s++;
-            localStorage.setItem('liaScore', s);
-            updateUI();
-            const emoji = document.getElementById('emoji');
-            emoji.innerText = "יירוט מוצלח! ✨";
-            emoji.classList.add('success-msg');
-            setTimeout(next, 1200);
+            clearTimeout(timer);
+            if(isMissileMode) launch();
+            else {
+                score++; finishAction();
+            }
         } else {
-            document.getElementById('emoji').innerText = "😟 נסי שוב!";
-            document.getElementById('emoji').classList.remove('success-msg');
+            document.getElementById('emoji').innerText = "נסי שוב 😟";
         }
     }
 
-    function launchInterceptor() {
+    function getSmartHint() {
+        let msg = "";
+        if (n1 === 2 || n2 === 2) {
+            let other = (n1 === 2) ? n2 : n1;
+            msg = `זה "כפול 2"! פשוט מחברים את המספר לעצמו: כמה זה ${other} + ${other}?`;
+        } else if (n1 === 5 || n2 === 5) {
+            msg = `רמז של חמש: נסי לספור באצבעות בקפיצות של 5: "5, 10, 15..."`;
+        } else if (n1 === 10 || n2 === 10) {
+            msg = `קסם ה-10: לוקחים את המספר ${(n1 === 10 ? n2 : n1)} ופשוט מוסיפים לו 0 בסוף!`;
+        } else {
+            const options = [
+                `חוק החילוף: אם קשה לך ${n1} פעמים ${n2}, נסי לחשוב כמה זה ${n2} פעמים ${n1}. זה אותו דבר!`,
+                `בואי ננסה בחיבור: זה כאילו כתוב ${n2} + ${n2} ... (סך הכל ${n1} פעמים).`,
+                `רמז: התוצאה היא בין ${correct - 4} לבין ${correct + 4}.`
+            ];
+            msg = options[Math.floor(Math.random() * options.length)];
+        }
+        alert("✨ רמז לליה האלופה ✨\n\n" + msg);
+    }
+
+    function launch() {
         const icept = document.getElementById('interceptor');
         const m = document.getElementById('missile');
-        icept.style.left = m.style.left;
+        const boom = document.getElementById('boom');
+        const bat = document.getElementById('batteryObj').getBoundingClientRect();
+        
+        icept.style.transition = 'none';
+        icept.style.left = bat.left + 'px';
+        icept.style.top = bat.top + 'px';
         icept.style.display = 'block';
-        icept.style.height = '600px';
+
+        const mRect = m.getBoundingClientRect();
+        const hitTop = mRect.top + 50;
+
         setTimeout(() => {
-            icept.style.display = 'none';
-            icept.style.height = '0';
-            m.style.transition = 'none';
-            m.style.top = '-150px'; 
-        }, 400);
+            icept.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            icept.style.left = mRect.left + 'px';
+            icept.style.top = hitTop + 'px';
+
+            setTimeout(() => {
+                icept.style.display = 'none';
+                m.style.transition = 'none';
+                m.style.top = '-200px';
+                boom.style.left = mRect.left + 'px';
+                boom.style.top = hitTop + 'px';
+                boom.style.display = 'block';
+                score++; finishAction();
+            }, 800);
+        }, 50);
+    }
+
+    function finishAction() {
+        localStorage.setItem('liaScore', score);
+        updateUI();
+        document.getElementById('emoji').innerText = isMissileMode ? "יירוט מוצלח! 💥" : "נכון מאוד! ✨";
+        setTimeout(next, 1500);
     }
 
     function updateUI() {
-        document.getElementById('score').innerText = s;
-        document.getElementById('medals').innerText = Math.floor(s/10);
-        document.getElementById('trophies').innerText = Math.floor(s/100);
+        document.getElementById('score').innerText = score;
+        document.getElementById('medals').innerText = Math.floor(score/10);
+        document.getElementById('trophies').innerText = Math.floor(score/100);
     }
 
-    document.getElementById('ans').addEventListener('keypress', (e) => { if(e.key==='Enter') check(); });
+    updateUI();
 </script>
 </body>
 </html>
